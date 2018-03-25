@@ -5,15 +5,30 @@ import (
 	"io"
 	"os"
 	"log"
+	"io/ioutil"
 )
 
+func dir(file []os.FileInfo, path string) error {
+	for _, val := range file {
+		if val.IsDir() != true {
+			fmt.Println("├───" + val.Name())
+		} else {
+			fmt.Println("├───" + val.Name())
+			file, _ := ioutil.ReadDir(path + val.Name())
+			dir(file, path + val.Name() + "/")
+		}
+	}
+
+	return nil
+}
+
 func dirTree(out io.Reader, path string, printFiles bool) error {
-	file, err := os.Open("testdata")
+	file, err := ioutil.ReadDir("testdata")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(file.Readdir(0))
+    dir(file, "testdata/")
 
 	return err
 }
